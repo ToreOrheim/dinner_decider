@@ -1,0 +1,11 @@
+services:
+  dinner_prepper:
+    build: .
+    image: dinner_prepper:latest
+    container_name: dinner_prepper
+    volumes:
+      - .:/usr/src/dinner_prepper
+    working_dir: /usr/src/dinner_prepper
+    command: []  # Optional: Specify default args or commands
+    restart: on-failure
+
