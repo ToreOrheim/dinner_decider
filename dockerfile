@@ -17,12 +17,10 @@ COPY . .
 # Build the actual binary
 RUN cargo install --path .
 
-# Use a smaller base image to run the program
-FROM debian:bookworm-slim
+FROM alpine:3.19
 
 # Install necessary dependencies for the application (if any)
-RUN apt-get update && \
-    apt-get install -y libc6 && \
+RUN apk add gcompat && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy the built binary from the builder image
@@ -33,4 +31,6 @@ ENTRYPOINT ["/usr/local/bin/dinner_prepper"]
 
 # Optional: Set the default command or environment variables
 # CMD []
+
+
 
