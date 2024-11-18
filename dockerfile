@@ -2,7 +2,7 @@
 FROM rust:1.73 AS builder
 
 # Set the working directory in the container
-WORKDIR /usr/src/dinner_prepper
+WORKDIR /src/dinner_prepper
 
 # Copy the Cargo.toml and Cargo.lock files to the container
 COPY . .
@@ -17,10 +17,12 @@ COPY . .
 # Build the actual binary
 RUN cargo install --path .
 
-FROM alpine:3.19
+# Use a smaller base image to run the program
+FROM debian:bookworm-slim
 
 # Install necessary dependencies for the application (if any)
-RUN apk add gcompat && \
+RUN apt-get update && \
+    apt-get install -y libc6 && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy the built binary from the builder image
