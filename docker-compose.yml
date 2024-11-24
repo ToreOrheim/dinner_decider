@@ -5,26 +5,10 @@ services:
     container_name: dinner_prepper
     volumes:
       - /src/dinner_prepper
-    networks:
-      - dinner_net
+      - ./db:/db
     working_dir: /src/dinner_prepper
     command: []  # Optional: Specify default args or commands
     restart: on-failure
-
-  database:
-    container_name: dinner_prepper_db
-    build:
-      context: .
-      dockerfile: dockerfile.sqlite
-    volumes:
-      - dinner_prepper_data:/db
-    networks:
-      - dinner_net
-
-volumes:
-  dinner_prepper_data:
-
-networks:
-  dinner_net:
-    driver: bridge
       
+volumes:
+  db:

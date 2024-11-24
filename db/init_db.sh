@@ -1,7 +1,7 @@
 #!/bin/bash
 
-DB_FILE="database.db"
-SCHEMA_FILE="schema.sql"
+DB_FILE="/db/database.db"
+SCHEMA_FILE="/db/schema.sql"
 
 # Check if the SQLite command-line tool is installed
 if ! command -v sqlite3 &>/dev/null; then
