@@ -9,10 +9,18 @@ CREATE TABLE IF NOT EXISTS Dish (
     notes TEXT
 );
 
+CREATE TABLE IF NOT EXISTS Tags (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    dish_id INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    description TEXT,
+    FOREIGN KEY (dish_id) REFERENCES Dish(id) ON DELETE CASCADE
+);
+
 -- Create the Ingredients table
 CREATE TABLE IF NOT EXISTS Ingredients (
     id INTEGER PRIMARY KEY AUTOINCREMENT,  -- Unique identifier for the ingredient
-    dish_id INTEGER,                       -- Foreign key to the Dish table
+    dish_id INTEGER NOT NULL,                       -- Foreign key to the Dish table
     name TEXT NOT NULL,                     -- Name of the ingredient (e.g., "Sugar", "Salt")
     quantity INTEGER,                          -- Quantity of the ingredient (e.g., "2 cups", "1 tbsp")
     unit TEXT,                              -- Unit of measurement (e.g., "grams", "cups")
@@ -57,6 +65,10 @@ VALUES
     (1, 'Worcestershire Sauce', NULL, 'splash'),
     (1, 'Fresh thyme sprigs', 6, 'pcs'),
     (1, 'Basil stems', 5.5, 'pcs');
+
+INSERT INTO Tags (dish_id, name)
+VALUES
+    (1, "DINNER");
 
 -- Insert the dish into the Dish table
 INSERT INTO Dish (name, description, instructions, prep_time, cook_time)

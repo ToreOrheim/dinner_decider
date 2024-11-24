@@ -1,41 +1,50 @@
-mod database;
+mod models {
+    pub mod dish;
+    pub mod ingredient;
+    pub mod mapper_for_dish;
+    pub mod tag;
+}
 
-use database::Dish;
-use rusqlite::{params, Connection, Result};
+mod readers {
+    pub mod dish;
+}
+
+use models::dish::Dish;
+use rand::seq::SliceRandom;
+use rand::thread_rng;
+use readers::dish::{get_all_dish_ids, get_dish_by_id};
+use rusqlite::{Connection, Result};
 
 fn main() -> Result<()> {
     // Open a connection to the database
     let conn = Connection::open("/db/database.db")?;
 
-    // Query a dish by its ID
-    let dish_id = 2; // Replace with the desired dish ID
-    let dish = get_dish_by_id(&conn, dish_id)?;
+    // Fetch 7 unique random dishes
+    let dishes = random_dishes(&conn).unwrap();
 
-    println!("Fetched Dish: {:?}", dish);
+    // Print the fetched dishes
+    for dish in dishes {
+        println!("Random Dish: {:?}", dish.name);
+    }
 
     Ok(())
 }
 
-fn get_dish_by_id(conn: &Connection, id: i32) -> Result<Dish> {
-    // SQL query to fetch the dish by ID
-    let mut stmt = conn.prepare(
-        "SELECT id, name, description, instructions, prep_time, cook_time, notes 
-         FROM Dish 
-         WHERE id = ?1",
-    )?;
+fn random_dishes(conn: &Connection) -> Result<Vec<Dish>> {
+    let all_dish_ids = get_all_dish_ids(conn).unwrap();
+    // Create a random number generator
+    let mut rng = thread_rng();
 
-    // Execute the query and map the result to a Dish struct
-    let dish = stmt.query_row(params![id], |row| {
-        Ok(Dish {
-            id: row.get(0)?,               // ID column
-            name: row.get(1)?,             // Name column
-            description: row.get(2).ok(),  // Nullable
-            instructions: row.get(3).ok(), // Nullable
-            prep_time: row.get(4).ok(),    // Nullable
-            cook_time: row.get(5).ok(),    // Nullable
-            notes: row.get(6).ok(),        // Nullable
-        })
-    })?;
+    // Select 7 random dish IDs
+    let random_dish_ids: Vec<i32> = all_dish_ids.choose_multiple(&mut rng, 7).cloned().collect();
 
-    Ok(dish)
+    let mut dishes: Vec<Dish> = Vec::new();
+    for rand_id in random_dish_ids {
+        let dish = get_dish_by_id(&conn, rand_id);
+        if !dish.is_err() {
+            dishes.push(dish.unwrap());
+        }
+    }
+
+    Ok(dishes)
 }

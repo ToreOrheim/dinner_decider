@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 rusqlite = "0.29"
 serde = { version = "1.0.215", features = ["derive"] }
+rand = "0.8"
 
 [[bin]]
 name = "dinner_prepper"
